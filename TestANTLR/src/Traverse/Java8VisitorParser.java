@@ -28,6 +28,11 @@ public class Java8VisitorParser extends Java8BaseVisitor  {
 
     @Override
     public Object visitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
+        /**
+         * @Description: 按照 NormalClassDeclaration规则访问AST
+         *  @param ctx： NormalClassDeclarationContext
+         *
+         */
         String className = ctx.Identifier().getText();
         List<Java8Parser.ClassBodyDeclarationContext> bodyDeclarations = ctx.classBody().classBodyDeclaration();
         List<Java8Parser.MethodDeclarationContext> methodDeclarations = new ArrayList<Java8Parser.MethodDeclarationContext>();

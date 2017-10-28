@@ -1,7 +1,12 @@
 package Entity;
 
 import Entity.CloneCode;
-
+/**
+ * @Author: YanMing
+ * @Description: 表示代码克隆对，包含两个克隆代码段实例
+ * @Date: 2017/10/28 21:13
+ *
+ */
 public class ClonePair {
     private CloneCode code1;
     private CloneCode code2;

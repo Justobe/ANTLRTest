@@ -3,7 +3,12 @@ package Entity;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
-
+/**
+ * @Author: YanMing
+ * @Description: 抽象出的方法定义
+ * @Date: 2017/10/28 21:14
+ *
+ */
 public class MethodDef {
     private String methodHeader;
     private String className;

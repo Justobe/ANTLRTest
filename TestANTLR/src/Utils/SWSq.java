@@ -7,61 +7,68 @@ import org.antlr.v4.runtime.Token;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentSkipListSet;
 
-
+/**
+ * @Author: YanMing
+ * @Description: 实现SW算法的类
+ * @Date: 2017/10/28 21:51
+ */
 public class SWSq {
-    private int[][] H;
-    private int[][] Travel;
-    private static int SPACE ;
-    private static int MATCH ;
-    private static int DISMACH;
-    private ArrayList<Integer> niceIndexM;
-    private ArrayList<Integer> niceIndexN;
-    private ArrayList<Loc> locs;
+    private int[][] H; // SW算法中的计算序列相同值的矩阵
+    private int[][] Travel; // 标记回溯过程的矩阵
+    private static int SPACE; // SW算法参数1 gap值
+    private static int MATCH; // SW算法参数2 
+    private static int DISMACH; // SW算法参数3
+    private ArrayList<Loc> locs; //记录矩阵中所有达到阈值的值的位置及矩阵值
+    private final int threshold = 10; // 设置阈值
+    private ArrayList<ClonePair> clonePairs; //所有检测出的代码克隆对列表
 
-    private final int threshold = 10;
-
-    private ArrayList<ClonePair> clonePairs;
-
-    public SWSq(){
+    public SWSq() {
         locs = new ArrayList<>();
         clonePairs = new ArrayList<>();
-        niceIndexN = new ArrayList<>();
-        niceIndexM = new ArrayList<>();
         SPACE = -1;
         MATCH = 1;
         DISMACH = -1;
     }
 
-    public void clearAll(){
+    public void clearAll() {
+        /**
+         * @Description: 清空位置信息和克隆对信息
+         * @param 
+         * 
+         */
         locs.clear();
         clonePairs.clear();
-        niceIndexM.clear();
-        niceIndexN.clear();
+
     }
 
 
-
-    public int max(int a, int b, int c){
+    public int max(int a, int b, int c) {
         int maxN;
-        if(a >= b)
+        if (a >= b)
             maxN = a;
         else
             maxN = b;
-        if(maxN < c)
+        if (maxN < c)
             maxN = c;
-        if(maxN < 0)
+        if (maxN < 0)
             maxN = 0;
         return maxN;
     }
 
-    public void calculateMatrix(ArrayList<Token> s1, ArrayList<Token> s2, int m, int n){//计算得分矩阵
-
-        for(int i = 1 ; i<m;i++)
-        {
-            for(int j = 1;j<n;j++)
-            {
-                if(s1.get(i-1).getType() == s2.get(j-1).getType())
+    public void calculateMatrix(ArrayList<Token> s1, ArrayList<Token> s2, int m, int n) {
+        /**
+         * @Description: 计算得分矩阵
+         * @param s1 ：比较的Token列表
+         * @param s2
+         * @param m 得分矩阵大小
+         * @param n
+         * 
+         */
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (s1.get(i - 1).getType() == s2.get(j - 1).getType())
                     H[i][j] = max(H[i - 1][j - 1] + MATCH, H[i][j - 1] + SPACE, H[i - 1][j] + SPACE);
                 else
                     H[i][j] = max(H[i - 1][j - 1] + DISMACH, H[i][j - 1] + SPACE, H[i - 1][j] + SPACE);
@@ -71,58 +78,44 @@ public class SWSq {
 
     }
 
-    public void printMatrix(int m,int n){
-        for(int i = 0 ; i <m;i++)
-        {
-            for(int j = 0 ; j <n;j++)
-            {
+    public void printMatrix(int m, int n) {
+        /**
+         * @Description: 打印得分矩阵
+         * @param m
+         * @param n
+         * 
+         */
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 System.out.print(H[i][j]);
             }
             System.out.println();
         }
     }
 
-    public void findMaxIndex(int[][] H, int m, int n){//找到得分矩阵H中得分最高的元组的下标
-
-        for(int i = 1; i < m; i++)
-            for(int j = 1; j < n; j++)
-                if(H[i][j] >= threshold){
-                    locs.add(new Loc(i,j,H[i][j]));
-                    //max = H[i][j];
-                    //niceIndexM.add(i-1);
-                    //niceIndexN.add(j-1);
+    public void findNiceIndex(int[][] H, int m, int n) {
+        /**
+         * @Description: 计算得分矩阵中达到阈值的值得位置，作为候选克隆对
+         * @param H ：得分矩阵
+         * @param m
+         * @param n
+         * 
+         */
+        for (int i = 1; i < m; i++)
+            for (int j = 1; j < n; j++)
+                if (H[i][j] >= threshold) {
+                    locs.add(new Loc(i, j, H[i][j]));
                 }
         locs.sort(new LocComparator());
     }
-    public void traceBack(int m,int n){//回溯 寻找最相似子序列
-       /*for(int i = 0;i<m.size();i++)
-       {
-           int mindex = m.get(i);
-           int nindex = n.get(i);
 
-           int tmpM = mindex;
-           int tmpN = nindex;
-
-           while (tmpM>=0&&tmpN>=0&&H[tmpM][tmpN] != 0)
-           {
-               if(H[tmpM][tmpN] == H[tmpM-1][tmpN] + SPACE) {
-                   tmpM = tmpM - 1;
-               }
-               else if(H[tmpM][tmpN] == H[tmpM][tmpN-1] + SPACE) {
-                  tmpN = tmpN - 1;
-               }
-               else {
-                  tmpM = tmpM - 1;
-                  tmpN = tmpN - 1;
-               }
-           }
-           CloneCode codeA = new CloneCode(tmpM,mindex);
-           CloneCode codeB = new CloneCode(tmpN,nindex);
-
-           ClonePair clonePair = new ClonePair(codeA,codeB);
-           clonePairs.add(clonePair);
-       }
-    */
+    public void traceBack(int m, int n) {//
+        /**
+         * @Description: 回溯 寻找代码克隆对
+         * @param m
+         * @param n
+         *
+         */
         Travel = new int[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
@@ -133,14 +126,17 @@ public class SWSq {
         for (Loc loc : locs) {
             int tmpM = loc.m;
             int tmpN = loc.n;
-            if(Travel[tmpM][tmpN] == 0) {
+            // 判断当前取出的位置是否被访问过
+            if (Travel[tmpM][tmpN] == 0) {
+                //记录回溯路径
                 Stack<GenericPair> trace = new Stack<>();
                 boolean traveled = false;
+                // 直到当前矩阵值为1，不断寻找前驱
                 while (H[tmpM][tmpN] != 1) {
-                    if(Travel[tmpM][tmpN] == 1)
-                    {
-                        while (!trace.empty())
-                        {
+                    //如果中途发现被访问过
+                    if (Travel[tmpM][tmpN] == 1) {
+                        //清空回溯路径并退出
+                        while (!trace.empty()) {
                             GenericPair pair = trace.pop();
                             int mindex = (Integer) pair.getFirst();
                             int nindex = (Integer) pair.getSecond();
@@ -148,10 +144,10 @@ public class SWSq {
                         }
                         traveled = true;
                         break;
-                    }
-                    else {
+                    } else {
+                        //标记当前位置，记录回溯路径，同时寻找前驱
                         Travel[tmpM][tmpN] = 1;
-                        trace.push(new GenericPair(new Integer(tmpM),new Integer(tmpN)));
+                        trace.push(new GenericPair(new Integer(tmpM), new Integer(tmpN)));
                         if (H[tmpM][tmpN] == H[tmpM - 1][tmpN] + SPACE) {
                             tmpM = tmpM - 1;
                         } else if (H[tmpM][tmpN] == H[tmpM][tmpN - 1] + SPACE) {
@@ -162,65 +158,78 @@ public class SWSq {
                         }
                     }
                 }
-                if(!traveled&&tmpM!=0&&tmpN!=0){
-                    CloneCode codeA = new CloneCode(tmpM-1,loc.m-1);
-                    CloneCode codeB = new CloneCode(tmpN-1,loc.n-1);
+                //如果当前回溯成功同时，记录代码对信息
+                if (!traveled && tmpM != 0 && tmpN != 0) {
+                    CloneCode codeA = new CloneCode(tmpM - 1, loc.m - 1);
+                    CloneCode codeB = new CloneCode(tmpN - 1, loc.n - 1);
 
-                    ClonePair clonePair = new ClonePair(codeA,codeB);
+                    ClonePair clonePair = new ClonePair(codeA, codeB);
                     clonePairs.add(clonePair);
                 }
             }
         }
     }
 
-    public void find(ArrayList<Token> s1, ArrayList<Token> s2){
-        //initMatrix(s1.length(), s2.length());
+    public void find(ArrayList<Token> s1, ArrayList<Token> s2) {
+        /**
+         * @Description: 寻找s1，s2的克隆对
+         * @param s1
+         * @param s2
+         *
+         */
         int HM = s1.size() + 1;
         int HN = s2.size() + 1;
         H = new int[HM][HN];
-        for(int i = 0 ; i<HM;i++)
-        {
+        for (int i = 0; i < HM; i++) {
             H[i][0] = 0;
         }
-        for(int j = 0 ; j<HN;j++)
-        {
+        for (int j = 0; j < HN; j++) {
             H[0][j] = 0;
         }
         calculateMatrix(s1, s2, HM, HN);
-        findMaxIndex(H, HM, HN);
-        traceBack(HM,HN);
+        findNiceIndex(H, HM, HN);
+        traceBack(HM, HN);
     }
 
     public ArrayList<ClonePair> getClonePairs() {
         return clonePairs;
     }
 
-    class Loc{
+    /**
+     * @Author: YanMing
+     * @Description: 矩阵中值的位置及矩阵值
+     * @Date: 2017/10/28 22:05
+     *
+     */
+    class Loc {
         int m;
         int n;
         int matrixVal;
-        public Loc(int m,int n,int matrixVal){
+
+        public Loc(int m, int n, int matrixVal) {
             this.m = m;
             this.n = n;
             this.matrixVal = matrixVal;
         }
     }
 
-    class LocComparator implements Comparator<Loc>{
+    /**
+     * @Author: YanMing
+     * @Description: 矩阵位置比较器，矩阵值越大，或者越靠近右下角优先级越高
+     * @Date: 2017/10/28 22:05
+     *
+     */
+    class LocComparator implements Comparator<Loc> {
         @Override
         public int compare(Loc o1, Loc o2) {
-            if(o1.matrixVal >o2.matrixVal)
-            {
+            if (o1.matrixVal > o2.matrixVal) {
                 return -1;
-            }
-            else if(o1.matrixVal < o2.matrixVal)
-            {
+            } else if (o1.matrixVal < o2.matrixVal) {
                 return 1;
-            }
-            else {
-                if(o1.m > o2.m)
+            } else {
+                if (o1.m > o2.m)
                     return -1;
-                else if(o1.m<o2.m)
+                else if (o1.m < o2.m)
                     return 1;
                 else
                     return 0;

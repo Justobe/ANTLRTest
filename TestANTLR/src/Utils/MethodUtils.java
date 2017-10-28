@@ -7,10 +7,21 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-
+/**
+ * @Author: YanMing
+ * @Description: 针对方法的工具类
+ * @Date: 2017/10/28 21:24
+ *
+ */
 public class MethodUtils {
 
+
     public String StmntInText(ArrayList<Token> tokens) {
+        /**
+         * @Description: 以文本形式展示方法的语句
+         * @param tokens :token列表
+         *
+         */
         StringBuffer res = new StringBuffer();
         for (Token t : tokens) {
             res.append(t.getText() + " ");
@@ -19,6 +30,11 @@ public class MethodUtils {
     }
 
     public String StmntInType(ArrayList<Token> tokens) {
+        /**
+         * @Description: 以类型信息(数字)展示语句
+         * @param tokens :token列表
+         *
+         */
         StringBuffer res = new StringBuffer();
         for (Token t : tokens) {
             res.append(t.getType() + " ");
@@ -28,6 +44,11 @@ public class MethodUtils {
 
 
     public ArrayList<Token> splitStatement(ArrayList<Token> rawStatement) {
+        /**
+         * @Description: 将方法的token列表，以{,},;为分隔符分隔为语句
+         * @param rawStatement ：未分割前的token列表
+         *
+         */
         ArrayList<Token> statement = new ArrayList<>();
         for (Token t : rawStatement) {
             if (!t.getText().equals(";") && !t.getText().equals("{") && !t.getText().equals("}")) {
@@ -37,18 +58,13 @@ public class MethodUtils {
         return statement;
     }
 
-    public ArrayList<ClonePair> getValidPair(ArrayList<ClonePair> clonePairs,int lenA,int lenB) {
-        clonePairs.sort(new CPComparator());
-        int [] secA = new int [lenA+2];
-        int [] secB = new int [lenB+2];
-        return clonePairs;
-        /*for(int i = 0;i<clonePairs.size();i++)
-        {
-            int code
-        }*/
 
-    }
-
+    /**
+     * @Author: YanMing
+     * @Description: 比较克隆对顺序的比较器
+     * @Date: 2017/10/28 21:50
+     *
+     */
     class CPComparator implements Comparator<ClonePair> {
 
         @Override
