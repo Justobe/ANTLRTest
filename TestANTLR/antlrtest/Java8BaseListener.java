@@ -1,4 +1,4 @@
-// Generated from E:/Javaworkspace/TestANTLR/src\Java8.g4 by ANTLR 4.7
+// Generated from I:/Javaworkspace/idea/ANTLRTest/TestANTLR/src\Java8.g4 by ANTLR 4.7
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
