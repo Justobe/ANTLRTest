@@ -25,13 +25,20 @@ public class A {
     }
 
     public int func2(int a,int b){
-        a = a + 100;
-        b = b + 100;
-        if(a<b)
-        {
-            return a + b;
+        try{
+            a = a + 100;
+
+        }catch (Exception e){
+            b = b + 100;
         }
-        else
-            return b - a;
+
+        try {
+            if (a < b) {
+                return a + b;
+            } else
+                return b - a;
+        }catch (Exception e){
+
+        }
     }
 }

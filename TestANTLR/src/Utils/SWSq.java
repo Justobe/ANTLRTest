@@ -21,7 +21,7 @@ public class SWSq {
     private static int MATCH; // SW算法参数2 
     private static int DISMACH; // SW算法参数3
     private ArrayList<Loc> locs; //记录矩阵中所有达到阈值的值的位置及矩阵值
-    private final int threshold = 10; // 设置阈值
+    private final int threshold = 20; // 设置阈值
     private ArrayList<ClonePair> clonePairs; //所有检测出的代码克隆对列表
 
     public SWSq() {
@@ -35,8 +35,8 @@ public class SWSq {
     public void clearAll() {
         /**
          * @Description: 清空位置信息和克隆对信息
-         * @param 
-         * 
+         * @param
+         *
          */
         locs.clear();
         clonePairs.clear();
@@ -64,7 +64,7 @@ public class SWSq {
          * @param s2
          * @param m 得分矩阵大小
          * @param n
-         * 
+         *
          */
         for (int i = 1; i < m; i++) {
             for (int j = 1; j < n; j++) {
@@ -78,16 +78,26 @@ public class SWSq {
 
     }
 
-    public void printMatrix(int m, int n) {
+    public void printMatrix(ArrayList<Token> s1, ArrayList<Token> s2) {
         /**
          * @Description: 打印得分矩阵
          * @param m
          * @param n
-         * 
+         *
          */
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                System.out.print(H[i][j]);
+        System.out.print("        ");
+        for (int i = 0; i < s2.size(); i++) {
+            System.out.printf("%4d", s2.get(i).getType());
+        }
+        System.out.println();
+        for (int i = 0; i < s1.size() + 1; i++) {
+            if (i > 0) {
+                System.out.printf("%4d", s1.get(i - 1).getType());
+            } else {
+                System.out.printf("    ");
+            }
+            for (int j = 0; j < s2.size() + 1; j++) {
+                System.out.printf("%4d", H[i][j]);
             }
             System.out.println();
         }
@@ -99,7 +109,7 @@ public class SWSq {
          * @param H ：得分矩阵
          * @param m
          * @param n
-         * 
+         *
          */
         for (int i = 1; i < m; i++)
             for (int j = 1; j < n; j++)
@@ -132,7 +142,7 @@ public class SWSq {
                 Stack<GenericPair> trace = new Stack<>();
                 boolean traveled = false;
                 // 直到当前矩阵值为1，不断寻找前驱
-                while (H[tmpM][tmpN] != 1) {
+                while (H[tmpM][tmpN] != 0) {
                     //如果中途发现被访问过
                     if (Travel[tmpM][tmpN] == 1) {
                         //清空回溯路径并退出
@@ -159,12 +169,13 @@ public class SWSq {
                     }
                 }
                 //如果当前回溯成功同时，记录代码对信息
-                if (!traveled && tmpM != 0 && tmpN != 0) {
-                    CloneCode codeA = new CloneCode(tmpM - 1, loc.m - 1);
-                    CloneCode codeB = new CloneCode(tmpN - 1, loc.n - 1);
+                if (!traveled) {
+                    CloneCode codeA = new CloneCode(tmpM, loc.m - 1);
+                    CloneCode codeB = new CloneCode(tmpN, loc.n - 1);
 
                     ClonePair clonePair = new ClonePair(codeA, codeB);
                     clonePairs.add(clonePair);
+
                 }
             }
         }
@@ -199,7 +210,6 @@ public class SWSq {
      * @Author: YanMing
      * @Description: 矩阵中值的位置及矩阵值
      * @Date: 2017/10/28 22:05
-     *
      */
     class Loc {
         int m;
@@ -217,7 +227,6 @@ public class SWSq {
      * @Author: YanMing
      * @Description: 矩阵位置比较器，矩阵值越大，或者越靠近右下角优先级越高
      * @Date: 2017/10/28 22:05
-     *
      */
     class LocComparator implements Comparator<Loc> {
         @Override

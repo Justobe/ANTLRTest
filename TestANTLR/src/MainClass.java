@@ -22,8 +22,8 @@ public class MainClass {
         MethodUtils methodUtils = new MethodUtils();
         SWSq sq = new SWSq();
 
-        String codeA = mainClass.readContent("A.java");
-        String codeB = mainClass.readContent("B.java");
+        String codeA = mainClass.readContent("C.java");
+        String codeB = mainClass.readContent("D.java");
         System.out.println(codeA);
         System.out.println(codeB);
         ParseTree parseTreeA = mainClass.getParseTree(codeA).normalClassDeclaration();
@@ -44,6 +44,8 @@ public class MainClass {
                 System.out.println(methodA.getClassName()+":"+methodA.getMethodHeader() +"<----->"+methodB.getClassName()+":"+methodB.getMethodHeader());
 
                 sq.find(tokensA, tokensB);
+                //sq.printMatrix(tokensA,tokensB);
+                System.out.println();
                 ArrayList<ClonePair> clonePairs = sq.getClonePairs();
                 int t = 1;
                 for (ClonePair cp : clonePairs) {
@@ -55,9 +57,18 @@ public class MainClass {
                         System.out.print(tokensA.get(i).getText() + " ");
                     }
                     System.out.println();
+                    for (int i = cd1.getSindex(); i <= cd1.getEindex(); i++) {
+                        System.out.print(tokensA.get(i).getType() + " ");
+                    }
+                    System.out.println();
                     for (int i = cd2.getSindex(); i <= cd2.getEindex(); i++) {
                         System.out.print(tokensB.get(i).getText() + " ");
                     }
+                    System.out.println();
+                    for (int i = cd2.getSindex(); i <= cd2.getEindex(); i++) {
+                        System.out.print(tokensB.get(i).getType() + " ");
+                    }
+                    System.out.println();
                     System.out.println();
                 }
                 sq.clearAll();
