@@ -1,3 +1,5 @@
+package com.data;
+
 public class A {
 
     public int a;

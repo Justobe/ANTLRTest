@@ -19,8 +19,42 @@ import java.util.Arrays;
 
 public class TestClass {
     public static void main(String args[]) {
+        TestClass mainClass = new TestClass();
+        MethodUtils methodUtils = new MethodUtils();
 
 
+        String codeA = mainClass.readContent("A.java");
+
+        ParseTree parseTreeA = mainClass.getParseTree(codeA).packageDeclaration();
+
+        Java8VisitorParser JParserA = new Java8VisitorParser();
+        JParserA.visit(parseTreeA);
+
+        System.out.println(JParserA.getPackageName());
+
+
+    }
+
+    public String readContent(String filename) {
+        String dataDir = System.getProperty("user.dir") + "\\data\\";
+        String filePath = dataDir + filename;
+        File file = new File(filePath);
+        String code = null;
+        try {
+            code = FileUtils.readFileToString(file, "UTF-8");
+            return code;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Java8Parser getParseTree(String code) {
+        ANTLRInputStream antlrInputStream = new ANTLRInputStream(code);
+        Java8Lexer lexer = new Java8Lexer(antlrInputStream);
+        CommonTokenStream commonStream = new CommonTokenStream(lexer);
+        Java8Parser parseTree = new Java8Parser(commonStream);
+        return parseTree;
     }
 
 

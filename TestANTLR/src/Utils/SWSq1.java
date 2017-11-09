@@ -69,6 +69,7 @@ public class SWSq1 {
                 else
                     M[i][j] = max(M[i - 1][j - 1] + DISMACH, M[i][j - 1] + SPACE, M[i - 1][j] + SPACE);
 
+
                 // 初始化计算 hm矩阵
                 if (M[i][j] == 0) {
                     hm[i][j] = 0;
@@ -92,6 +93,7 @@ public class SWSq1 {
                 if (M[i][j] > THRESHOLD && M[i][j] > hm[i][j]) {
                     Locs.add(new Loc(i,j,M[i][j]));
                 }
+
 
 
             }
@@ -118,29 +120,6 @@ public class SWSq1 {
     }
 
     private void traceBack(String s1, String s2, int m, int n) {//回溯 寻找最相似子序列
-        /*int tmpM = m;
-        int tmpN = n;
-        while (M[tmpM][tmpN] != 0) {
-            if (M[tmpM][tmpN] == 0) {
-                break;
-            } else {
-                if (M[tmpM][tmpN] == M[tmpM - 1][tmpN] + SPACE) {
-                    stk1.add(s1.charAt(tmpM - 1));
-                    stk2.add('-');
-                    tmpM = tmpM - 1;
-                } else if (M[tmpM][tmpN] == M[tmpM][tmpN - 1] + SPACE) {
-                    stk1.add('-');
-                    stk2.add(s2.charAt(tmpN - 1));
-                    tmpN = tmpN - 1;
-                } else {
-                    stk1.push(s1.charAt(tmpM - 1));
-                    stk2.push(s2.charAt(tmpN - 1));
-                    tmpM = tmpM - 1;
-                    tmpN = tmpN - 1;
-                }
-            }
-        }
-*/
         Travel = new int[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
@@ -206,7 +185,6 @@ public class SWSq1 {
     }
 
     public void find(String s1, String s2) {
-        //initMatrix(s1.length(), s2.length());
         int ROW_NUM = s1.length() + 1;
         int COL_NUM = s2.length() + 1;
         M = new int[ROW_NUM][COL_NUM];
@@ -248,18 +226,6 @@ public class SWSq1 {
             }
             subSq1.add(sbA.toString());
             subSq2.add(sbB.toString());
-            /*System.out.println(loc.getRow() + " " + loc.getCol());
-            int tmpM = loc.getRow();
-            int tmpN = loc.getCol();
-            traceBack(s1, s2, tmpM, tmpN);
-            ArrayList<Character> arr1 = new ArrayList<Character>();
-            ArrayList<Character> arr2 = new ArrayList<Character>();
-            while (!stk1.empty())
-                arr1.add(stk1.pop());
-            subSq1.add(arr1.toString());
-            while (!stk2.empty())
-                arr2.add(stk2.pop());
-            subSq2.add(arr2.toString());*/
         }
     }
     class Loc {
@@ -311,12 +277,15 @@ public class SWSq1 {
 
     public static void main(String[] args) throws IOException {
         SWSq1 x = new SWSq1();
-        String s1, s2;
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String s1 = "abcdefghijklmnopqrsjtuv", s2 = "abcxdefghiymzjlukpqsjtuv";
+        /*BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter one String:");
         s1 = br.readLine();
         System.out.println("Enter another String:");
         s2 = br.readLine();
+        */
+        System.out.println("String 1: " + s1);
+        System.out.println("String 2: " + s2);
         x.find(s1, s2);
         for (int i = 0; i < x.subSq1.size(); i++) {
             System.out.println("The subsequences with greatest similarity are " + x.subSq1.get(i) + " and " + x.subSq2.get(i));
